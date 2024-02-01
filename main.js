@@ -8,7 +8,7 @@ const PORT = process.env.PORT || 3000;
 
 //database connection
 mongoose.connect(
-    "mongodb+srv://levananh:123@cluster0.mddxbxf.mongodb.net/?retryWrites=true&w=majority",
+    "mongodb+srv://levananh:123@cluster0.mddxbxf.mongodb.net/node_crud",
     {
       useNewUrlParser: true,
       useUnifiedTopology: true,
