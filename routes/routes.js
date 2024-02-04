@@ -122,7 +122,7 @@ router.get("/logout", requireLogin, (req, res) => {
     });
   });
 
-router.get('/add', requireLogin, (req, res) => {
+router.get('/add', (req, res) => {
     res.render("add_users", {title: "Add Users"});
 });
 
