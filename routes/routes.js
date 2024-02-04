@@ -94,7 +94,7 @@ router.post("/login", async (req, res) => {
         req.session.user = {
           username: req.body.username,
         };
-        res.redirect("/home");
+        res.redirect("/");
       } else {
         res.send("Wrong password.");
       }
@@ -104,7 +104,7 @@ router.post("/login", async (req, res) => {
   });
 
 
-router.get("/home", requireLogin, async (req, res) => {
+router.get("/", requireLogin, async (req, res) => {
     try {
         const users = await User.find().exec();
         res.render("index", {
