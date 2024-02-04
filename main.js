@@ -8,7 +8,7 @@ const PORT = process.env.PORT || 4000;
 
 //database connection
 mongoose.connect(
-    "mongodb+srv://levananh:123@cluster0.mddxbxf.mongodb.net/node_crud",
+    process.env.DB_URI,
     {
       useNewUrlParser: true,
       useUnifiedTopology: true,
