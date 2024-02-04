@@ -8,12 +8,24 @@ const PORT = process.env.PORT || 4000;
 
 //database connection
 mongoose.connect(
-    process.env.DB_URI,
+  `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@${process.env.DB_CLUSTER}/${process.env.DB_DATABASE}`,
     {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     }
   );
+
+// mongoose.set('strictQuery', false);
+// const connectDB = async ()=> {
+//   try{
+//     const conn = await mongoose.connect(process.env.MONGO_URI);
+//     console.log(`MongoDB Conected: ${conn.connection.host}`)
+//   } catch(error) {
+//     console.log(`Error : ${error}`);
+//     process.exit(1);
+//   }
+// }
+
 const db = mongoose.connection;
 db.on("error", (error) => console.log(error));
 db.once("open", () =>console.log("Connected to the database"));
