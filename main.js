@@ -2,6 +2,7 @@ require("dotenv").config();
 const express = require('express');
 const mongoose =  require('mongoose');
 const session =  require('express-session');
+const pasth = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -55,6 +56,8 @@ app.use("", require("./routes/routes"));
 //     res.send("Hello World");
 // });
 
+
+
 app.listen(PORT, () => {
-    console.log(`Server started at http://localhost:${PORT}`);
+    console.log(`Server started at http://localhost:${PORT}/signup`);
 });

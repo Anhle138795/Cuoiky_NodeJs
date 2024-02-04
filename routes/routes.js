@@ -3,6 +3,18 @@ const router = express.Router();
 const User = require('../models/users');
 const multer = require('multer');
 const fs = require('fs');
+const bcrypt = require('bcrypt');
+const collection = require('../models/account')
+
+const requireLogin = (req, res, next) => {
+    if (req.session && req.session.user) {
+      // Nếu người dùng đã đăng nhập, cho phép tiếp tục
+      next();
+    } else {
+      // Nếu người dùng chưa đăng nhập, chuyển hướng đến trang đăng nhập
+      res.redirect("/login");
+    }
+  };
 
 var storage = multer.diskStorage({
     destination: function(req, file, cb) {
@@ -39,7 +51,60 @@ router.post("/add", upload, async (req, res) => {
 });
 
 //Get all users route
-router.get("/", async (req, res) => {
+
+router.get("/signup", (req, res) => {
+    res.render("signup", {title: "Signup"});
+});
+  
+router.post("/signup", async (req, res) => {
+    const data = { 
+        name: req.body.username, 
+        password: req.body.password
+    }
+
+    const existingUser = await collection.findOne({name: data.name});
+
+    if (existingUser) {
+        res.send("User already exists. Please choose a different username.");
+    } else {
+        const saltRounds = 10; // Number of salt rounds for bcrypt
+        const hashedPassword = await bcrypt.hash(data.password, saltRounds);
+        data.password = hashedPassword;
+
+        const userdata = await collection.insertMany(data);
+        // console.log(userdata);  
+        res.redirect("/login");
+    }
+});
+
+router.get('/login', (req, res) => {
+    res.render("login", {title: "Login"});
+});
+
+router.post("/login", async (req, res) => {
+    try {
+      const check = await collection.findOne({name: req.body.username});
+      if (!check) {
+        res.send("Username not found.")
+      }
+  
+      const isPasswordMatch = await bcrypt.compare(req.body.password, check.password);
+  
+      if (isPasswordMatch) {
+        req.session.user = {
+          username: req.body.username,
+        };
+        res.redirect("/home");
+      } else {
+        res.send("Wrong password.");
+      }
+    } catch {
+      res.send("Wrong login details.");
+    }
+  });
+
+
+router.get("/home", requireLogin, async (req, res) => {
     try {
         const users = await User.find().exec();
         res.render("index", {
@@ -51,7 +116,13 @@ router.get("/", async (req, res) => {
     }
 });
 
-router.get('/add', (req, res) => {
+router.get("/logout", requireLogin, (req, res) => {
+    req.session.destroy(() => {
+      res.redirect("/login");
+    });
+  });
+
+router.get('/add', requireLogin, (req, res) => {
     res.render("add_users", {title: "Add Users"});
 });
 
@@ -124,5 +195,7 @@ router.get('/delete/:id', async (req, res) => {
         res.json({ message: err.message, type: 'danger' });
     }
 });
+
+
 
 module.exports = router;
