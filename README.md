@@ -4,3 +4,6 @@
 
 # Run
 `npm start`
+
+# Link host
+`https://rich-gray-cheetah-coat.cyclic.app/login`
